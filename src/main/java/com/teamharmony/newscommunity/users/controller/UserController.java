@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -70,6 +72,14 @@ public class UserController {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/signup/checkdup").toUriString());
 		return ResponseEntity.created(uri).body(userService.checkUser(username));
 	}
+	
+	// 현재 로그인한 유저 ID
+	@GetMapping("/user/me")
+	public ResponseEntity<String>getUsername(@AuthenticationPrincipal UserDetails user) {
+		String username = user.getUsername();
+		return ResponseEntity.ok().body(username);
+	}
+	
 	// 권한 추가
 	@PostMapping("/role/save")
 	public ResponseEntity<Role>saveUser(@RequestBody Role role) {

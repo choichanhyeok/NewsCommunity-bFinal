@@ -20,7 +20,8 @@ public class SimpleCorsFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		HttpServletResponse response = (HttpServletResponse) res;
 		HttpServletRequest request = (HttpServletRequest) req;
-		response.setHeader("Access-Control-Allow-Origin", "https://d37biwqy4pok6o.cloudfront.net");  // have to modify
+//		response.setHeader("Access-Control-Allow-Origin", "https://d37biwqy4pok6o.cloudfront.net");  // have to modify
+		response.setHeader("Access-Control-Allow-Origin", "http://localhost:63342");  // have to modify
 		response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH");
 		response.setHeader("Access-Control-Max-Age", "3600");
 		response.setHeader("Access-Control-Allow-Credentials", "true");

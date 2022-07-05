@@ -1,6 +1,9 @@
 package com.teamharmony.newscommunity.comments.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.teamharmony.newscommunity.comments.dto.CommentRequestDto;
+import com.teamharmony.newscommunity.users.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,13 +22,15 @@ public class Comment extends Timestamped {
     @Id
     private Long commentId;
     private String content;
-    private Long userId;
     private String newsId;
+
+    @JsonManagedReference
+    @ManyToOne
+    private User user;
 
 
     public Comment(CommentRequestDto commentRequestDto) {
         this.content = commentRequestDto.getContent();
-        this.userId = commentRequestDto.getUserId();
         this.newsId = commentRequestDto.getNewsId();
     }
 

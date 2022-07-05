@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -25,17 +26,20 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	private final AuthenticationManager authenticationManager;
+	private final UserDetailsService userDetailsService;
 	
-	public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+	public CustomAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
 		this.authenticationManager = authenticationManager;
+		this.userDetailsService = userDetailsService;
 	}
 	// 로그인 시도
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 		String username = request.getParameter("username_give");
 		String password = request.getParameter("password_give");
+		User user = (User) userDetailsService.loadUserByUsername(username);
 		// todo
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, password);
 		return authenticationManager.authenticate(authenticationToken);
 	}
 	// 로그인 성공

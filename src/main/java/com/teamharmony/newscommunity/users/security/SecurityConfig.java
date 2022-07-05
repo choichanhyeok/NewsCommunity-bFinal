@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), userDetailsService);
 		customAuthenticationFilter.setFilterProcessesUrl("/api/login");
 		http.csrf()
 		    .ignoringAntMatchers("/h2-console/**")
@@ -40,11 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.formLogin().disable();
 		http.httpBasic().disable();
 		http.sessionManagement().sessionCreationPolicy(STATELESS);
-//		http.authorizeRequests()
-//		    .antMatchers("/templates/**").permitAll()
-//		    .antMatchers("/static/**").permitAll();
 		http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
-
+		
 		http.authorizeRequests().antMatchers("/api/login/**", "/api/token/**", "/api/signup/**").permitAll();
 		http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAuthority("ROLE_USER");
 		http.authorizeRequests().antMatchers(GET, "/api/admin/**").hasAuthority("ROLE_ADMIN");
@@ -52,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		http.addFilter(customAuthenticationFilter);
 		// this filter comes before the other filters
-		http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new CustomAuthorizationFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);
 	}
 	@Bean
 	@Override

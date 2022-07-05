@@ -5,10 +5,13 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -28,34 +31,37 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 // 사용자 권한 확인
-@Slf4j
+@Slf4j @RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+	private final UserDetailsService userDetailsService;
+	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-				if (request.getServletPath()
-										 .equals("/api/login") ||
-						request.getServletPath()
-										 .equals("/api/token/refresh")) {
-					filterChain.doFilter(request, response);
-				} else {
-				String authorizationHeader = request.getHeader(AUTHORIZATION);
-				// it has the word bearer in front of a token, we know that it's our token
-				if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_TYPE)) {
-					try {
-						String token = authorizationHeader.substring(TOKEN_TYPE.length());
-						Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-						JWTVerifier verifier = JWT.require(algorithm)
-																			.build();
-						DecodedJWT decodedJWT = verifier.verify(token);
-						String username = decodedJWT.getSubject();
-						String[] roles = decodedJWT.getClaim("roles")
-																			 .asArray(String.class);
-						Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-						stream(roles).forEach(role -> {
-							authorities.add(new SimpleGrantedAuthority(role));
-						});
-						UsernamePasswordAuthenticationToken authenticationToken =
-								new UsernamePasswordAuthenticationToken(username, null, authorities);
+		if (request.getServletPath().equals("/api/login") ||
+				request.getServletPath().equals("/api/token/refresh") ||
+				request.getServletPath().equals("/api/signup") ||
+				request.getServletPath().equals("/api/signup/checkdup")) {
+			filterChain.doFilter(request, response);
+		} else {
+			String authorizationHeader = request.getHeader(AUTHORIZATION);
+			// it has the word bearer in front of a token, we know that it's our token
+			if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_TYPE)) {
+				try {
+					String token = authorizationHeader.substring(TOKEN_TYPE.length());
+					Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+					JWTVerifier verifier = JWT.require(algorithm)
+					                          .build();
+					DecodedJWT decodedJWT = verifier.verify(token);
+					String username = decodedJWT.getSubject();
+					String[] roles = decodedJWT.getClaim("roles")
+					                           .asArray(String.class);
+					Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+					stream(roles).forEach(role -> {
+						authorities.add(new SimpleGrantedAuthority(role));
+					});
+					User user = (User) userDetailsService.loadUserByUsername(username);
+					UsernamePasswordAuthenticationToken authenticationToken =
+							new UsernamePasswordAuthenticationToken(user, null, authorities);
 						// SS determine what resource they can access and what they can access depending on the roles
 						SecurityContextHolder.getContext()
 																 .setAuthentication(authenticationToken);
