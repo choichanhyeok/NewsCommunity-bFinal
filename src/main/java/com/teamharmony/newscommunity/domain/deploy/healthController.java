@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class healthController {
 
     @GetMapping("")
-    public ResponseEntity<String> healthcheck(){
-        return ResponseEntity.ok().build();
+    public String healthcheck(){
+        return "200";
     }
 }
