@@ -2,7 +2,7 @@ name: develop-to-beanstalk
 
 on:
   push:
-    branches: [ main ] # develop에 push될 때 CD가 일어나도록 핸들링
+    branches: [ test-deploy ] # develop에 push될 때 CD가 일어나도록 핸들링
   workflow_dispatch: # 수동 실행 옵션 (생략)
 
 
