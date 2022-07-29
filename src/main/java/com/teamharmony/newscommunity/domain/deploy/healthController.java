@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class healthController {
 
     @GetMapping("")
-    public String healthcheck(){
-        return "200";
+    public int healthcheck(){
+        return 200;
     }
 }
