@@ -37,7 +37,7 @@
 
 <br>
 
-## Architecture Diagram
+## Infra Architecture Diagram
 <img width="1109" src="https://user-images.githubusercontent.com/96354426/181658659-b00b5e35-1f60-412c-bcae-7fda4518bb2d.png">
 
 <br>
