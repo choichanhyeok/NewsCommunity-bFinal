@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 
+import org.hibernate.annotations.Fetch;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -34,7 +36,7 @@ public class Support extends Timestamped {
 
 
     @JsonManagedReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

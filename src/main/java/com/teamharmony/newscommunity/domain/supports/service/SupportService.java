@@ -27,12 +27,12 @@ public class SupportService {
      * @return 		Support 객체
      */
     @Transactional
-    public Support generateSupport(SupportRequestDto requestDto, String username){
+    public String generateSupport(SupportRequestDto requestDto, String username){
         Support support = new Support(requestDto, username);
         User user = userRepository.findByUsername(username);
         user.addSupports(support);
         supportRepository.save(support);
-        return support;
+        return "success";
     }
 
     /**

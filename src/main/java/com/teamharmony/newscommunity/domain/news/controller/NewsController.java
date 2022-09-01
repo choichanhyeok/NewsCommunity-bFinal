@@ -27,7 +27,7 @@ public class NewsController {
      */
 
     @GetMapping("")
-    @ApiOperation(value = "전체 뉴스를 조회하는 메소드")
+    @ApiOperation(value = "전체 뉴스 조회", notes = "전체 뉴스를 조회하는 메소드")
     public ResponseEntity<List<NewsDetailResponseDto>> getNews(){
         return ResponseEntity.ok().body(newsService.getNews());
     }
@@ -40,12 +40,10 @@ public class NewsController {
      * @see         NewsService#getNewsDetail
      */
 
-    @ApiOperation(value = "요청한 뉴스(newsId)의 상세 정보 response해주는 메소드")
-    @ApiImplicitParams(
-            {
-                    @ApiImplicitParam(name = "newsId", value = "news 식별 정보 Id", required = true, dataType = "String", example = "330155b5-be5d-4474-8df8-21858c")
-            }
-    )
+    @ApiOperation(value = "뉴스 상세 정보 조회", notes = "요청한 뉴스(newsId)의 상세 정보 response해주는 메소드")
+    @ApiImplicitParams({
+		    @ApiImplicitParam(name = "newsId", value = "news 식별 정보 Id", required = true, dataType = "String", example = "330155b5-be5d-4474-8df8-21858c")
+	})
     @GetMapping("/details/{newsId}")
     public ResponseEntity<NewsDetailResponseDto> getNewsDetial(@PathVariable String newsId){
         return ResponseEntity.ok().body(newsService.getNewsDetail(newsId));
@@ -58,7 +56,10 @@ public class NewsController {
      * @see NewsService#setNewsAccessLog
      */
 
-    @ApiOperation(value = "요청 바디의 로깅 정보(newsId, userId) 기반으로 접근 기록 생성")
+    @ApiOperation(value = "뉴스 접근 기록", notes = "요청 바디의 로깅 정보(newsId, userId) 기반으로 접근 기록 생성")
+    @ApiResponses({
+		    @ApiResponse(code = 200, message = "OK", examples = @Example(value = @ExampleProperty(value = "330155b5-be5d-4474-8df8-21858c"))),
+    })
     @PostMapping("/logs")
     public ResponseEntity<String> createNewsAccessLog(@RequestBody CreateNewsAccessLogRequestDto requestCreateNewsAccessLogDTO){
         String newsId = newsService.setNewsAccessLog(requestCreateNewsAccessLogDTO);
@@ -72,12 +73,13 @@ public class NewsController {
      * @see NewsService#addView(String) 
      */
 
-    @ApiOperation(value = "요청 Path의 newsId의 조회수를 1 증가")
-    @ApiImplicitParams(
-            {
-                    @ApiImplicitParam(name = "newsId", value = "조회수 업데이트를 위한 타겟 newsId", required = true, dataType = "String", example = "330155b5-be5d-4474-8df8-21858c")
-            }
-    )
+    @ApiOperation(value = "조회수 업데이트", notes = "요청 Path의 newsId의 조회수를 1 증가")
+    @ApiImplicitParams({
+		    @ApiImplicitParam(name = "newsId", value = "조회수 업데이트를 위한 타겟 newsId", required = true, dataType = "String", example = "330155b5-be5d-4474-8df8-21858c")
+	})
+    @ApiResponses({
+		    @ApiResponse(code = 200, message = "OK", examples = @Example(value = @ExampleProperty(value = "success"))),
+    })
     @PutMapping("/views/{newsId}")
     public ResponseEntity<String> UpdateView(@PathVariable String newsId){
         newsService.addView(newsId);

@@ -102,7 +102,7 @@ public class CommentService {
     @Transactional
     public void updateComment(Long id, CommentEditRequestDto commentEditRequestDto) {
         Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new InvalidRequestException("해당 댓글은 이미 삭제되었기 때문에 수정할 수 없습니다", "삭제된 댓글 아이디 " + id, "C403")
+                () -> new InvalidRequestException("해당 댓글은 이미 삭제되었기 때문에 수정할 수 없습니다.", "삭제된 댓글 아이디 " + id, "C403")
         );
         comment.update(commentEditRequestDto);
     }

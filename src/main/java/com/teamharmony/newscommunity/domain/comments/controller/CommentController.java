@@ -28,10 +28,9 @@ public class CommentController {
      * @return 저장된 댓글의 id
      */
     @ApiResponses({
-            @ApiResponse(code = 200, message = "댓글 저장 성공"),
-            @ApiResponse(code = 400, message = "c401 댓글 내용이나 뉴스 아이디가 비어있습니다", response = ErrorResponse.class)
+		    @ApiResponse(code = 200, message = "OK", examples = @Example(value = @ExampleProperty(value = "댓글 작성 성공")))
     })
-    @ApiOperation(value = "댓글 저장")
+    @ApiOperation(value = "댓글 저장", notes = "뉴스 아이디와 댓글 내용을 넘겨받아 댓글을 저장하는 API")
     @PostMapping("/user/comments")
     public ResponseEntity<String> saveComment(@RequestBody @Valid CommentCreateRequestDto commentCreateRequestDto,
                                          @CurrentUser String username) {
@@ -52,11 +51,7 @@ public class CommentController {
             @ApiImplicitParam(name="size",value = "페이지에 보일 댓글의 수",  required = true, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name="sortBy",value = "정렬 기준",  required = true, dataType = "string", paramType = "query")
     })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "댓글 조회 성공", response = CommentResponseDto.class),
-            @ApiResponse(code = 400, message = "C402 댓글을 불러올 수 없습니다", response = ErrorResponse.class)
-    })
-    @ApiOperation(value = "댓글 조회")
+    @ApiOperation(value = "댓글 조회", notes = "페이징 된 댓글의 페이지 번호, 페이지 사이즈, 정렬 기준, 정렬 방향 등을 넘겨받아 댓글을 클라이언트에게 넘겨주는 API")
     @GetMapping("/comments/{news_id}/{currentUser}")
     public ResponseEntity<Page<CommentResponseDto>> getComment(@PathVariable String news_id,
                                                                @RequestParam("page") int page,
@@ -75,13 +70,12 @@ public class CommentController {
      * @return 수정된 댓글의 id
      */
     @ApiResponses({
-            @ApiResponse(code = 200, message = "댓글 수정 성공"),
-            @ApiResponse(code = 400, message = "c403 이미 삭제된 댓글은 수정할 수 없습니다", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "OK", examples = @Example(value = @ExampleProperty(value = "수정 성공"))),
     })
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "댓글의 아이디", required = true, dataType = "int", paramType = "path")
     })
-    @ApiOperation(value = "댓글 수정")
+    @ApiOperation(value = "댓글 수정", notes = "댓글 수정 내용을 넘겨받아 데이터베이스에 저장된 댓글의 내용을 수정하는 API")
     @PutMapping("/user/comments/{id}")
     public ResponseEntity<String> editComment(@PathVariable Long id,
                                          @RequestBody @Valid CommentEditRequestDto commentEditRequestDto) {
@@ -95,12 +89,12 @@ public class CommentController {
      * @return 삭제된 댓글의 id
      */
     @ApiResponses({
-            @ApiResponse(code = 200, message = "댓글 삭제 성공")
+		    @ApiResponse(code = 200, message = "OK", examples = @Example(value = @ExampleProperty(value = "삭제 성공"))),
     })
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "댓글의 아이디", required = true, dataType = "int", paramType = "path")
     })
-    @ApiOperation(value = "댓글 삭제")
+    @ApiOperation(value = "댓글 삭제", notes = "댓글을 식별할 수 있는 아이디를 넘겨받아 해당 댓글을 데이터베이스에서 삭제하는 API")
     @DeleteMapping("/user/comments/{id}")
     public ResponseEntity<String> deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
@@ -112,13 +106,10 @@ public class CommentController {
      * @param news_id
      * @return 해당 기사에 달린 댓글의 개수
      */
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "댓글 개수 조회 성공")
-    })
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "news_id", value = "뉴스 아이디", required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "news_id", value = "뉴스 아이디", required = true, dataType = "String", example = "330155b5-be5d-4474-8df8-21858c")
     })
-    @ApiOperation(value = "댓글 개수 조회")
+    @ApiOperation(value = "댓글 개수 조회", notes = "데이터베이스에서 뉴스 아이디를 기준으로 댓글의 개수를 카운팅하여 넘겨주는 API")
     @GetMapping("/user/comments/count/{news_id}")
     public ResponseEntity<Integer> getCommentCount(@PathVariable String news_id) {
         return ResponseEntity.ok().body(commentService.getCommentCount(news_id));
@@ -139,10 +130,7 @@ public class CommentController {
             @ApiImplicitParam(name = "username", value = "유저의 아이디", required = true, dataType = "string", paramType = "path")
 
     })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "댓글 조회 성공", response = CommentResponseDto.class)
-    })
-    @ApiOperation(value = "프로필 페이지에서 유저가 작성한 댓글 조회")
+    @ApiOperation(value = "프로필 페이지에서 유저가 작성한 댓글 조회", notes = "특정 유저의 아이디를 기준으로 데이터베이스에서 댓글을 찾아서 프로필페이지에서 해당 유저의 댓글만 볼 수 있게 넘겨주는 API")
     @GetMapping("/comments/profile/{username}/{currentUser}")
     public ResponseEntity<Page<CommentResponseDto>> getCommentsOnProfilePage(@PathVariable String username,
                                                                              @RequestParam int page,

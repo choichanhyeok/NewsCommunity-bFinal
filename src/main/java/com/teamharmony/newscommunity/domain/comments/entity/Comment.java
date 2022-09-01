@@ -30,7 +30,7 @@ public class Comment extends Timestamped {
     private String newsId;
 
     @JsonManagedReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

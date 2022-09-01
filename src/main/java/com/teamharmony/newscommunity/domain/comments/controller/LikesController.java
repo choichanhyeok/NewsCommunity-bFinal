@@ -21,11 +21,10 @@ public class LikesController {
      * @param username
      */
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "댓글의 아이디", required = true, dataType = "int", paramType = "path"),
-            @ApiImplicitParam(name = "username", value = "현재 로그인 한 유저", required = true, paramType = "body")
+            @ApiImplicitParam(name = "id", value = "댓글의 아이디", required = true, dataType = "Long", example = "1"),
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "좋아요 성공")
+            @ApiResponse(code = 200, message = "OK", examples = @Example(value = @ExampleProperty(value = "좋아요")))
     })
     @ApiOperation(value = "좋아요 작동")
     @PostMapping("/user/likes/{id}")
@@ -41,10 +40,7 @@ public class LikesController {
      * @return 특정 댓글에 표시된 좋아요 개수
      */
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "commentId", value = "댓글의 아이디", required = true, dataType = "int", paramType = "path")
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "좋아요 개수 조회 성공")
+		    @ApiImplicitParam(name = "commentId", value = "댓글의 아이디", required = true, dataType = "Long", example = "1"),
     })
     @ApiOperation(value = "좋아요 개수 조회")
     @GetMapping("/user/likes/count/{commentId}")
@@ -59,8 +55,7 @@ public class LikesController {
      * @return 유저가 좋아요 한 이력이 있으면 true, 아니면 false
      */
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "commentId", value = "댓글의 아이디", required = true, dataType = "int", paramType = "path"),
-            @ApiImplicitParam(name = "username", value = "현재 로그인 한 유저", required = true, paramType = "body")
+            @ApiImplicitParam(name = "commentId", value = "댓글의 아이디", required = true, dataType = "Long", example = "1"),
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "좋아요 여부 확인 성공")

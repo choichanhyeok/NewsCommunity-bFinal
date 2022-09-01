@@ -1,9 +1,6 @@
 package com.teamharmony.newscommunity.domain.users.service;
 
-import com.teamharmony.newscommunity.domain.users.dto.ProfileRequestDto;
-import com.teamharmony.newscommunity.domain.users.dto.ProfileResponseDto;
-import com.teamharmony.newscommunity.domain.users.dto.SignupRequestDto;
-import com.teamharmony.newscommunity.domain.users.dto.UserResponseDto;
+import com.teamharmony.newscommunity.domain.users.dto.*;
 import com.teamharmony.newscommunity.domain.users.entity.*;
 import com.teamharmony.newscommunity.domain.users.repository.RoleRepository;
 import com.teamharmony.newscommunity.domain.users.repository.UserProfileRepository;
@@ -77,11 +74,8 @@ public class UserService implements UserDetailsService {
 	 * @param username 중복 확인할 사용자 ID
 	 * @return 사용자 ID 중복 여부
 	 */
-	public Map<String, Boolean> checkUser(String username) {
-		Map<String, Boolean> body = new HashMap<>();
-		Boolean exists = getUser(username) != null;
-		body.put("exists", exists);
-		return body;
+	public boolean checkUser(String username) {
+		return getUser(username) != null;
 	}
 
 	/**
@@ -152,7 +146,7 @@ public class UserService implements UserDetailsService {
 		User user = getUser(username);
 		Role role = getRole(roleName);
 		if (role == null) throw InvalidRequestException.builder()
-		                                               .message("해당 권한을 찾을 수 없습니다")
+		                                               .message("해당 권한을 찾을 수 없습니다.")
 		                                               .invalidValue("권한명: " + roleName)
 		                                               .code("U403")
 		                                               .build();
@@ -197,15 +191,15 @@ public class UserService implements UserDetailsService {
 	 * @param status 인증된 사용자 ID와 일치 여부
 	 * @return 인증된 사용자 ID와 일치 여부, 프로필 사진 url, 프로필 정보
 	 */
-	public Map<String, Object> getProfile(String username, boolean status) {
+	public GetProfileResponseDto getProfile(String username, boolean status) {
 		User user = getUser(username);
 		UserProfile profile = user.getProfile();
-		ProfileResponseDto profileDto = new ProfileResponseDto(profile);
-		Map<String, Object> body = new HashMap<>();
-		body.put("status", status);
-		body.put("link", getProfileImageUrl(username));
-		body.put("profile", profileDto);
-		return body;
+		String link = getProfileImageUrl(username);
+		return GetProfileResponseDto.builder()
+		                            .profile(profile)
+		                            .status(status)
+		                            .link(link)
+		                            .build();
 	}
 
 	/**
@@ -237,7 +231,7 @@ public class UserService implements UserDetailsService {
 	 * @param requestDto 변경할 프로필 정보
 	 * @return 성공 확인, 메시지
 	 */
-	public Map<String, String> updateProfile(String username, ProfileRequestDto requestDto) {
+	public String updateProfile(String username, ProfileRequestDto requestDto) {
 		UserProfile existingProfile = getUser(username).getProfile();  // 해당 사용자의 기존 프로필 찾기
 		if (existingProfile == null) throw InvalidRequestException.builder()
 		                                                          .message("사용자의 프로필을 찾을 수 없습니다.")
@@ -262,10 +256,6 @@ public class UserService implements UserDetailsService {
 		// 프로필 변경 사항 적용 후 DB 저장
 		existingProfile.update(requestDto);
 		profileRepository.save(existingProfile);
-
-		Map<String, String> body = new HashMap<>();
-		body.put("result", "success");
-		body.put("msg", "프로필 변경이 완료되었습니다.");
-		return body;
+		return "success";
 	}
 }

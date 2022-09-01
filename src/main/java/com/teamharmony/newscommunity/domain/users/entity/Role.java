@@ -1,5 +1,6 @@
 package com.teamharmony.newscommunity.domain.users.entity;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ public class Role {
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "role_id")
 	private Long id;
+	@ApiModelProperty(value = "권한명", example = "USER", required = true)
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
 	private RoleType name;
